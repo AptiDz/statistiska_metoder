@@ -1,17 +1,20 @@
 import numpy as np
 import scipy.stats as stats
 
-# G # 
+# G checklist class 
 
 class LinearRegression:
     def __init__(self, X, Y):
         # Initierar själva objektet med insatsdata X och responsvariabel Y
         self.X = X
         self.Y = Y
+    
         
+    # G property start #
+    # G checklista property
     @property
-    def n(self):
-        # Returnerar antalet rader i datan
+    def n(self): 
+        # Returnerar antalet rader i datan 
         n = self.X.shape[0]               
         return n
     
@@ -26,7 +29,8 @@ class LinearRegression:
         # Skapar deignmatrisen genom att lägga till intercept alltså kolumn ettor framför X kolumner
         X_des = np.column_stack((self.ones, self.X)) 
         return X_des
-        
+    
+    # G checklista property 
     @property
     def d(self): 
         # Visar antalet insatsdata alltså antalet kolumner utan intercept   
@@ -111,10 +115,10 @@ class LinearRegression:
         df2 = self.n - self.d - 1
         return df2
     
-# G #
+# G property slut #
     
     """
-    VG
+    VG property start
     """
     
     @property
@@ -125,22 +129,22 @@ class LinearRegression:
     
     @property
     def var_b(self):
-        # Beräknar varians för varje kooeffient
+        # Beräknar varians för varje koefficient
         var_b = np.diag(self.XTX_inv) * self.var
         return var_b
     
-    
+    """ VG checklist property """
     @property
     def cl(self):
-        # confidenslevel alltså Konfidensnivå till 0.95%
+        # confidens level alltså Konfidensnivå till 0.95%
         cl = 0.95
         return cl
     
     """
-    VG
+    VG property slut
     """
 
-# G #
+# G checklist metoder start #
     
     def calculate_variance(self):
         # Metoden används för att få ut den skattade variansen
@@ -161,10 +165,10 @@ class LinearRegression:
         r2 = self.SSR / self.SYY     
         return r2
         
-# G #
+# G checklist metoder slut #
         
     """
-    VG
+    VG checklist metoder start
     """
 
     def calculate_coefficients_significance(self):
@@ -203,12 +207,12 @@ class LinearRegression:
         
         alpha = 1 - self.cl # Signifikansnivå är 0.05 vid 95% konfidens level
         
-        # Beräknar det kritiska t-värde som exempelvis är 0.975-kvantil vid 95% cl
+        # Beräknar det kritiska t-värde vid 95% cl
         t_crit = stats.t.ppf(1 - alpha/2, self.df2)
         
         ci_list = []
         # Går igenom intercept för varje koefficient
-        for i in range(self.d+1): 
+        for i in range(self.d + 1): 
             beta_i = self.b[i] # Gå igenom aktuell koefficient
             se_i = np.sqrt(self.var_b[i]) # få ut varje standarderror för koefficienten
             margin = t_crit * se_i # marginalen 
@@ -219,7 +223,7 @@ class LinearRegression:
         return ci_list
 
     """
-    VG
+    VG checklist metoder end
     """  
         
 """
