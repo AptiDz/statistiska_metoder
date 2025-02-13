@@ -122,16 +122,10 @@ class LinearRegression:
     """
     
     @property
-    def XTX_inv(self):
-        # Beräknar inversen av X^T * X För att kunna användas för att beräkna variansen på koefficienterna
-        XTX_inv = np.linalg.inv(self.XTX) 
-        return XTX_inv
-    
-    @property
-    def var_b(self):
-        # Beräknar varians för varje koefficient
-        var_b = np.diag(self.XTX_inv) * self.var
-        return var_b
+    def c(self):
+        # Beräknar inversen av X^T * X För att kunna användas för att beräkna cii
+        c = np.linalg.inv(self.XTX) 
+        return c
     
     """ VG checklist property """
     @property
@@ -173,12 +167,12 @@ class LinearRegression:
 
     def calculate_coefficients_significance(self):
         # Metoden beräknar t-test för varje koefficient med intercept.
-        
+        sigma_hat = np.sqrt(self.var)  # sigma som är skattad
         results = []
         # Gå igenom varje kolumn inkluderat intercept
         for i in range((self.d) + 1):
             beta_i = self.b[i] # Gå igenom aktuell koefficient
-            se_i = np.sqrt(self.var_b[i]) # få ut varje standarderror för koefficienten
+            se_i = sigma_hat * np.sqrt(self.c[i, i]) # få ut varje standarderror för koefficienten sigma * sqrt(cii)
             t_stat = beta_i / se_i  # Det är t-värde = beta / standarderror
             
             # Beräknar comulative distribution function och survival function för t-fördelning
@@ -204,7 +198,7 @@ class LinearRegression:
     
     def calculate_coefficients_confidence_intervals(self):
        # Metoden beräknar konfidensintervall för varje koefficient inkluderas intercept baserat på konfidensnivå 95%
-        
+        sigma_hat = np.sqrt(self.var)  # Sigma som är skattad
         alpha = 1 - self.cl # Signifikansnivå är 0.05 vid 95% konfidens level
         
         # Beräknar det kritiska t-värde vid 95% cl
@@ -214,7 +208,7 @@ class LinearRegression:
         # Går igenom intercept för varje koefficient
         for i in range(self.d + 1): 
             beta_i = self.b[i] # Gå igenom aktuell koefficient
-            se_i = np.sqrt(self.var_b[i]) # få ut varje standarderror för koefficienten
+            se_i = sigma_hat * np.sqrt(self.c[i, i]) # få ut varje standarderror för koefficienten
             margin = t_crit * se_i # marginalen 
             ci_lower = beta_i - margin # nedre gränsen för konfidensintervallet
             ci_upper = beta_i + margin # övre gränsen för konfidensintervallet
